@@ -1,11 +1,17 @@
-//: Date extensions
+//: A few useful NSDate extensions
 
 import UIKit
 
 extension NSDate {
     
+    convenience init?(dateString : String, format : String) {
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateFormat = format
+        self.init(timeIntervalSince1970 : (dateFormatter.dateFromString(dateString)?.timeIntervalSince1970)!)
+    }
+    
     var day : Int {
-         return NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!.components([NSCalendarUnit.Day], fromDate: self).day
+         return NSCalendar.currentCalendar().ordinalityOfUnit(.Day, inUnit: .Month, forDate: self)
     }
     
     var dayOfYear : Int {
@@ -13,58 +19,48 @@ extension NSDate {
     }
     
     var hour : Int {
-       return NSCalendar.currentCalendar().components([NSCalendarUnit.Hour], fromDate: self).hour
+       return NSCalendar.currentCalendar().components(.Hour, fromDate: self).hour
     }
     
     var minute : Int {
-        return NSCalendar.currentCalendar().components([NSCalendarUnit.Minute], fromDate: self).minute
+        return NSCalendar.currentCalendar().components(.Minute, fromDate: self).minute
     }
     
     var month : Int {
-        return NSCalendar.currentCalendar().components([NSCalendarUnit.Month], fromDate: self).month
+        return NSCalendar.currentCalendar().components(.Month, fromDate: self).month
     }
     
     var year : Int {
-        return NSCalendar.currentCalendar().components([NSCalendarUnit.Year], fromDate: self).year
+        return NSCalendar.currentCalendar().components(.Year, fromDate: self).year
     }
 
     func addMinutes(minutes : Int) -> NSDate {
         return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Minute,
-            value: minutes,
-            toDate: self,
+            .Minute, value: minutes, toDate: self,
             options: NSCalendarOptions(rawValue: 0))!
     }
     
     func addHours(hours : Int) -> NSDate {
         return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Hour,
-            value: hours,
-            toDate: self,
+            .Hour, value: hours, toDate: self,
             options: NSCalendarOptions(rawValue: 0))!
     }
     
     func addDays(days : Int) -> NSDate {
         return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Day,
-            value: days,
-            toDate: self,
+            .Day, value: days, toDate: self,
             options: NSCalendarOptions(rawValue: 0))!
     }
 
     func addMonths(months : Int) -> NSDate {
         return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Month,
-            value: months,
-            toDate: self,
+            .Month, value: months, toDate: self,
             options: NSCalendarOptions(rawValue: 0))!
     }
 
     func addYears(years : Int) -> NSDate {
         return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Year,
-            value: years,
-            toDate: self,
+            .Year, value: years, toDate: self,
             options: NSCalendarOptions(rawValue: 0))!
     }
     
@@ -78,13 +74,37 @@ extension NSDate {
         return formatter.stringFromDate(self)
     }
 
+    func dateString(style : NSDateFormatterStyle, timezone : NSTimeZone) -> String {
+        let formatter = NSDateFormatter()
+        formatter.dateStyle = style
+        formatter.timeZone = timezone
+        return formatter.stringFromDate(self)
+    }
+    
     func timeString(style : NSDateFormatterStyle = .ShortStyle) -> String {
         let formatter = NSDateFormatter()
         formatter.timeStyle = style
         return formatter.stringFromDate(self)
     }
+
+    func timeString(style : NSDateFormatterStyle, timezone : NSTimeZone) -> String {
+        let formatter = NSDateFormatter()
+        formatter.timeStyle = style
+        formatter.timeZone = timezone
+        return formatter.stringFromDate(self)
+    }
+    
+    func getComponentsWithTimeZone(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> NSDateComponents {
+        return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self)
+    }
+    
+    func between(toDate : NSDate, units : NSCalendarUnit = [NSCalendarUnit.Day] ) -> NSDateComponents {
+        return NSCalendar.currentCalendar().components(units, fromDate: self, toDate: toDate, options: [])
+    }
     
 }
+
+NSDate(dateString: "2013-09-29T18:46:19-0700", format: "yyyy-MM-dd'T'HH:mm:ssZ")
 
 NSDate().dateString()
 NSDate().dateString(.LongStyle)
@@ -106,3 +126,9 @@ NSDate().addMinutes(45)
 NSDate().addHours(2)
 
 NSDate().getTime()
+
+NSDate().getComponentsWithTimeZone().day
+NSDate().getComponentsWithTimeZone(NSTimeZone(name: "Asia/Kuala_Lumpur")!).day
+
+NSDate().between(NSDate().addMonths(1),units :NSCalendarUnit.Hour).day
+
