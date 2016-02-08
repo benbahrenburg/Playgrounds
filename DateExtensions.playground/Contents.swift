@@ -143,26 +143,26 @@ extension NSDate {
         return Int64(self.timeIntervalSince1970 * 1000)
     }
     
-    func toDateString(style : NSDateFormatterStyle = .MediumStyle) -> String {
+    func formatDate(style : NSDateFormatterStyle = .MediumStyle) -> String {
         let formatter = NSDateFormatter()
         formatter.dateStyle = style
         return formatter.stringFromDate(self)
     }
 
-    func toDateString(style : NSDateFormatterStyle, timezone : NSTimeZone) -> String {
+    func formatDate(style : NSDateFormatterStyle, timezone : NSTimeZone) -> String {
         let formatter = NSDateFormatter()
         formatter.dateStyle = style
         formatter.timeZone = timezone
         return formatter.stringFromDate(self)
     }
     
-    func toTimeString(style : NSDateFormatterStyle = .ShortStyle) -> String {
+    func formatTime(style : NSDateFormatterStyle = .ShortStyle) -> String {
         let formatter = NSDateFormatter()
         formatter.timeStyle = style
         return formatter.stringFromDate(self)
     }
 
-    func toTimeString(style : NSDateFormatterStyle, timezone : NSTimeZone) -> String {
+    func formatTime(style : NSDateFormatterStyle, timezone : NSTimeZone) -> String {
         let formatter = NSDateFormatter()
         formatter.timeStyle = style
         formatter.timeZone = timezone
@@ -195,11 +195,11 @@ NSDate().getUTCHours()
 NSDate().getMinutes()
 NSDate().getUTCMinutes()
 
-NSDate().toDateString()
-NSDate().toDateString(.LongStyle)
+NSDate().formatDate()
+NSDate().formatDate(.LongStyle)
 
-NSDate().toTimeString()
-NSDate().toTimeString(.MediumStyle)
+NSDate().formatTime()
+NSDate().formatTime(.MediumStyle)
 
 NSDate().getDayOfYear()
 NSDate().getUTCDayOfYear()
