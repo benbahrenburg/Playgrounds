@@ -3,7 +3,7 @@
 import UIKit
 
 extension NSDate {
-  
+    
     convenience init?(year : Int, month : Int, day : Int, hours : Int = 0, minutes : Int = 0, seconds : Int = 0) {
         let component = NSDateComponents()
         component.year = year
@@ -25,122 +25,66 @@ extension NSDate {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).day
     }
     
-    func getUTCDate() -> Int {
-        return self.getDate(NSTimeZone(name: "UTC")!)
-    }
-    
     func getDay(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).weekday
-    }
-    
-    func getUTCDay() -> Int {
-        return self.getDay(NSTimeZone(name: "UTC")!)
     }
     
     func getFullYear(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).year
     }
-
-    func getUTCFullYear() -> Int {
-        return self.getFullYear(NSTimeZone(name: "UTC")!)
-    }
     
     func getMonth(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).month
     }
-
-    func getUTCMonth() -> Int {
-        return self.getMonth(NSTimeZone(name: "UTC")!)
-    }
     
     func getHours(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).hour
-    }
-
-    func getUTCHours(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
-        return self.getHours(NSTimeZone(name: "UTC")!)
     }
     
     func getMinutes(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).hour
     }
     
-    func getUTCMinutes(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
-        return self.getMinutes(NSTimeZone(name: "UTC")!)
-    }
-    
     func getSeconds(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).second
     }
     
-    func getUTCSeconds(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
-        return self.getSeconds(NSTimeZone(name: "UTC")!)
-    }
-   
     func getWeekOfMonth(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).weekOfMonth
     }
     
-    func getWeekOfMonth() -> Int {
-        return self.getWeekOfMonth(NSTimeZone(name: "UTC")!)
+    func get(unit: NSCalendarUnit, inUnit: NSCalendarUnit,timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
+        let calendar = NSCalendar.currentCalendar()
+        calendar.timeZone = timezone
+        return calendar.ordinalityOfUnit(unit, inUnit: inUnit, forDate: self)
     }
     
     func getWeekOfYear(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
         return NSCalendar.currentCalendar().componentsInTimeZone(timezone, fromDate: self).weekOfYear
     }
-
-    func getUTCWeekOfYear() -> Int {
-        return self.getWeekOfYear(NSTimeZone(name: "UTC")!)
-    }
     
     func getDayOfYear(timezone : NSTimeZone = NSTimeZone.localTimeZone()) -> Int {
-        let calendar = NSCalendar.currentCalendar()
-        calendar.timeZone = timezone
-        return calendar.ordinalityOfUnit(.Day, inUnit: .Year, forDate: self)
+        return self.get(.Day, inUnit: .Year, timezone: timezone)
     }
     
-    func getUTCDayOfYear() -> Int {
-        return self.getDayOfYear(NSTimeZone(name: "UTC")!)
-    }
-
-    func addSeconds(seconds : Int) -> NSDate {
+    func add(unit : NSCalendarUnit, amount : Int) -> NSDate {
         return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Second, value: seconds, toDate: self,
+            unit, value: amount, toDate: self,
             options: NSCalendarOptions(rawValue: 0))!
     }
     
-    func addMinutes(minutes : Int) -> NSDate {
-        return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Minute, value: minutes, toDate: self,
-            options: NSCalendarOptions(rawValue: 0))!
-    }
-    
-    func addHours(hours : Int) -> NSDate {
-        return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Hour, value: hours, toDate: self,
-            options: NSCalendarOptions(rawValue: 0))!
-    }
-    
-    func addDays(days : Int) -> NSDate {
-        return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Day, value: days, toDate: self,
-            options: NSCalendarOptions(rawValue: 0))!
-    }
-
-    func addMonths(months : Int) -> NSDate {
-        return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Month, value: months, toDate: self,
-            options: NSCalendarOptions(rawValue: 0))!
-    }
-
-    func addYears(years : Int) -> NSDate {
-        return NSCalendar.currentCalendar().dateByAddingUnit(
-            .Year, value: years, toDate: self,
-            options: NSCalendarOptions(rawValue: 0))!
+    func subtract(unit : NSCalendarUnit, amount : Int) -> NSDate {
+        return self.add(unit, amount: (amount * -1))
     }
     
     func getTime() -> Int64 {
         return Int64(self.timeIntervalSince1970 * 1000)
+    }
+    
+    func format(format : String) -> String {
+        let formatter = NSDateFormatter()
+        formatter.dateFormat = format
+        return formatter.stringFromDate(self)
     }
     
     func formatDate(style : NSDateFormatterStyle = .MediumStyle) -> String {
@@ -184,16 +128,16 @@ NSDate(dateString: "2013-09-29T18:46:19-0700", format: "yyyy-MM-dd'T'HH:mm:ssZ")
 NSDate(year: 2012, month: 11, day: 15)
 
 NSDate().getDay()
-NSDate().getUTCDay()
+NSDate().getDay(NSTimeZone(name: "UTC")!)
 
 NSDate().getDate()
-NSDate().getUTCDate()
+NSDate().getDate(NSTimeZone(name: "UTC")!)
 
 NSDate().getHours()
-NSDate().getUTCHours()
+NSDate().getHours(NSTimeZone(name: "UTC")!)
 
 NSDate().getMinutes()
-NSDate().getUTCMinutes()
+NSDate().getMinutes(NSTimeZone(name: "UTC")!)
 
 NSDate().formatDate()
 NSDate().formatDate(.LongStyle)
@@ -202,18 +146,18 @@ NSDate().formatTime()
 NSDate().formatTime(.MediumStyle)
 
 NSDate().getDayOfYear()
-NSDate().getUTCDayOfYear()
+NSDate().getDayOfYear(NSTimeZone(name: "UTC")!)
 
-NSDate().addDays(1)
-NSDate().addMonths(1)
-NSDate().addYears(1)
-NSDate().addMinutes(45)
-NSDate().addHours(2)
+NSDate().add(.Day,amount: 1)
+NSDate().add(.Month,amount: 1)
+NSDate().add(.Year,amount: 1)
+NSDate().add(.Minute,amount:45)
+NSDate().add(.Hour,amount:2)
 
 NSDate().getTime()
 
 NSDate().getComponentsWithTimeZone().day
 NSDate().getComponentsWithTimeZone(NSTimeZone(name: "Asia/Kuala_Lumpur")!).day
 
-NSDate().between(NSDate().addMonths(1),units :NSCalendarUnit.Hour).day
+NSDate().between(NSDate()add(.Month,amount: 1),units :NSCalendarUnit.Hour).day
 
