@@ -2,10 +2,10 @@
 
 import UIKit
 
-extension NSTimeZone {
+extension TimeZone {
     
-    func exists(name : String) -> Bool {
-        return NSTimeZone.knownTimeZoneNames().contains(name)
+    func exists(_ name : String) -> Bool {
+        return TimeZone.knownTimeZoneIdentifiers.contains(name)
     }
     
 }

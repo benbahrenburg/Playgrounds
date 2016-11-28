@@ -8,18 +8,18 @@ let IANAtimeZones = ["GMT","Europe/Andorra","Asia/Dubai","Asia/Kabul","America/A
 
 //NSTimeZone feels pretty familar for moment.js users
 //Create a NSTimeZone object using an IANA timezone name
-let timeZone = NSTimeZone(name: "Asia/Kuala_Lumpur")
+let timeZone = TimeZone(identifier: "Asia/Kuala_Lumpur")
 //What is the abbreviation
-timeZone?.abbreviation
+timeZone?.abbreviation()
 //Get the description with everything
-timeZone?.description
+(timeZone as NSTimeZone?)?.description
 
 /**************************************************/
 //  Let's look at what timezone names iOS supports
 /**************************************************/
 
 //Get a list of all timezones iOS supports
-let iOStimeZones = NSTimeZone.knownTimeZoneNames()
+let iOStimeZones = TimeZone.knownTimeZoneIdentifiers
 
 //Loop through each
 for tz in iOStimeZones {
@@ -39,8 +39,8 @@ for tz in IANAtimeZones {
 var diffTZ  = [String]()
 
 //Create a method to check if an TZ exists on iOS
-func tzExists(name : String) -> Bool {
-    return NSTimeZone.knownTimeZoneNames().contains(name)
+func tzExists(_ name : String) -> Bool {
+    return TimeZone.knownTimeZoneIdentifiers.contains(name)
 }
 
 //Try a real timezone

@@ -5,28 +5,28 @@ import UIKit
 extension String {
     
     func contains(find: String, caseInsensitive : Bool = false) -> Bool{
-        return self.rangeOfString(find,options: caseInsensitive ? .CaseInsensitiveSearch : []) != nil
+        return self.range(of: find,options: caseInsensitive ? .caseInsensitive : []) != nil
     }
     
 }
 
-"Hello, playground".contains("Hello")
-"Hello, playground".contains("hello")
-"Hello, playground".contains("hello",caseInsensitive:true)
+"Hello, playground".contains(find: "Hello")
+"Hello, playground".contains(find: "hello")
+"Hello, playground".contains(find: "hello", caseInsensitive:true)
 
 
 extension String {
     
-    func indexOf(searchValue: String, caseInsensitive : Bool = false) -> Int {
-        let index = (self as NSString).rangeOfString(searchValue,options: caseInsensitive ? .CaseInsensitiveSearch : []).location
+    func indexOf(searchFor: String, caseInsensitive : Bool = false) -> Int {
+        let index = (self as NSString).range(of: searchFor,options: caseInsensitive ? .caseInsensitive : []).location
         return index == NSNotFound ? -1 : index
     }
     
 }
 
-"Hello, playground".indexOf("p")
-"Hello, playground".indexOf("P")
-"Hello, playground".indexOf("P",caseInsensitive: true)
+"Hello, playground".indexOf(searchFor: "p")
+"Hello, playground".indexOf(searchFor: "P")
+"Hello, playground".indexOf(searchFor: "P",caseInsensitive: true)
 
 
 extension String {
@@ -43,22 +43,22 @@ extension String {
 extension String {
     
     func trim() -> String {
-        return self.stringByTrimmingCharactersInSet(
-            NSCharacterSet.whitespaceAndNewlineCharacterSet()
+        return self.trimmingCharacters(
+            in: CharacterSet.whitespacesAndNewlines
         )
     }
     
     func trimStart() -> String {
-        if let range = rangeOfCharacterFromSet(NSCharacterSet.whitespaceAndNewlineCharacterSet().invertedSet) {
-            return self[range.startIndex..<endIndex]
+        if let range = rangeOfCharacter(from: CharacterSet.whitespacesAndNewlines.inverted) {
+            return self[range.lowerBound..<endIndex]
         }
         
         return self
     }
     
     func trimEnd() -> String {
-        if let range = rangeOfCharacterFromSet(NSCharacterSet.whitespaceAndNewlineCharacterSet().invertedSet, options: NSStringCompareOptions.BackwardsSearch) {
-            return self[startIndex..<range.endIndex]
+        if let range = rangeOfCharacter(from: CharacterSet.whitespacesAndNewlines.inverted, options: NSString.CompareOptions.backwards) {
+            return self[startIndex..<range.upperBound]
         }
         
         return self
@@ -75,7 +75,7 @@ extension String {
 extension String {
     
     func isEmpty() -> Bool {
-        return (self.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).characters.count == 0)
+        return (self.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).characters.count == 0)
     }
     
 }
@@ -88,20 +88,20 @@ extension String {
 extension String {
     
     func startsWith(prefix: String, caseInsensitive : Bool = false) -> Bool {
-        return self.rangeOfString(prefix, options: caseInsensitive ? .CaseInsensitiveSearch : [])?.startIndex == startIndex
+        return self.range(of: prefix, options: caseInsensitive ? .caseInsensitive : [])?.lowerBound == startIndex
     }
     
 }
 
-"Hello, playground".startsWith("Hell")
-"Hello, playground".startsWith("hell")
-"Hello, playground".startsWith("hell",caseInsensitive:true)
+"Hello, playground".startsWith(prefix: "Hell")
+"Hello, playground".startsWith(prefix: "hell")
+"Hello, playground".startsWith(prefix: "hell", caseInsensitive:true)
 
 
 extension String {
 
-    func endsWith(suffix: String, caseInsensitive : Bool = false) -> Bool {
-        return (caseInsensitive) ? self.lowercaseString.hasSuffix(suffix.lowercaseString) :
+    func endsWith(_ suffix: String, caseInsensitive : Bool = false) -> Bool {
+        return (caseInsensitive) ? self.lowercased().hasSuffix(suffix.lowercased()) :
             self.hasSuffix(suffix)
     }
     
@@ -115,14 +115,14 @@ extension String {
 extension String {
     
     func replace(before: String, with: String, caseInsensitive: Bool = false) -> String {
-            return self.stringByReplacingOccurrencesOfString(before, withString: with, options: caseInsensitive ? .CaseInsensitiveSearch : [])
+            return self.replacingOccurrences(of: before, with: with, options: caseInsensitive ? .caseInsensitive : [])
     }
     
 }
 
-"Hello, playground".replace("Hello", with: "Goodbye")
-"Hello, playground".replace("o", with: "x")
-"Hello, playground".replace("hello", with: "Goodbye",caseInsensitive: true)
+"Hello, playground".replace(before: "Hello", with: "Goodbye")
+"Hello, playground".replace(before: "o", with: "x")
+"Hello, playground".replace(before: "hello", with: "Goodbye",caseInsensitive: true)
 
 
 extension String {
@@ -133,6 +133,6 @@ extension String {
     
 }
 
-" h e l l o ".split(" ")
-"Hello playground".split(" ")
+" h e l l o ".split(separator: " ")
+"Hello playground".split(separator: " ")
 
