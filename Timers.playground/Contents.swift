@@ -5,22 +5,31 @@ import UIKit
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
-final public class DelayTimer {
+protocol BXTimer {
+    func run(closure: @escaping ()-> Void) -> BXTimer?
+    func clear()
+}
+
+final public class DelayTimer: BXTimer {
     fileprivate let interval: TimeInterval
+    fileprivate let queue = DispatchQueue(label: "com.bencoding.timer.delay", attributes: [.concurrent])
     fileprivate var timer: Timer?
     
     init(interval: TimeInterval) {
         self.interval = interval
     }
     
-    func run(closure: @escaping ()-> Void) -> DelayTimer? {
+    func run(closure: @escaping ()-> Void) -> BXTimer? {
         guard timer == nil else {
             print("timer already set, call clear before running again.")
             return self
         }
         timer = Timer.scheduledTimer(withTimeInterval: self.interval, repeats: false, block: {(timer) in
-            closure()
-            self.clear()
+            self.queue.async {
+                closure()
+                self.clear()
+            }
+            
         })
         
         return self
@@ -37,21 +46,24 @@ final public class DelayTimer {
     
 }
 
-final public class RepeatTimer {
+final public class RepeatTimer: BXTimer {
     fileprivate let interval: TimeInterval
+    fileprivate let queue = DispatchQueue(label: "com.bencoding.timer.repeat", attributes: [.concurrent])
     fileprivate var timer: Timer?
     
     init(interval: TimeInterval) {
         self.interval = interval
     }
     
-    func run(closure: @escaping ()-> Void) -> RepeatTimer? {
+    func run(closure: @escaping ()-> Void) -> BXTimer? {
         guard timer == nil else {
             print("timer already set, call clear before running again.")
             return self
         }
         timer = Timer.scheduledTimer(withTimeInterval: self.interval, repeats: true, block: {(timer) in
+            self.queue.async {
                 closure()
+            }
         })
         
         return self
@@ -68,7 +80,7 @@ final public class RepeatTimer {
 }
 
 var tCounter: Int = 0
-let t = RepeatTimer(interval: 2)
+let t = RepeatTimer(interval: 1)
 
 t.run(closure: {
     if tCounter > 15 {
@@ -79,11 +91,11 @@ t.run(closure: {
     tCounter += 1
 })
 
-let t2 = RepeatTimer(interval: 12).run(closure: {
+let t2 = RepeatTimer(interval: 10).run(closure: {
     print("hello from t2")
 })
 
 
-let y = DelayTimer(interval: 3).run(closure: {
+let y = DelayTimer(interval: 2).run(closure: {
     print("y timer")
 })
